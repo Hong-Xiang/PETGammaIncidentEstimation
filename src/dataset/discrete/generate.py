@@ -1,3 +1,6 @@
+"""
+Convert csv data to database.
+"""
 import pandas
 from engine import session
 from events import Coincidence, Photon, Hit
