@@ -1,12 +1,30 @@
-from engine import session
-from events import Coincidence, Photon, Hit
+from engine import get_or_create_session
+from events import Coincidence, Photon, Hit, create_all
 import tqdm
 import numpy as np
 
+from contextlib import contextmanager
+dataset_path = '../../../data/gamma.db'
+
+create_all(dataset_path)
+
 
 def query_phton_and_first_hit():
-    return (session.query(Photon, Hit).filter(Hit.photon_id == Photon.id)
-            .filter(Hit.index == 0))
+    return (get_or_create_session().query(Photon, Hit)
+            .filter(Hit.photon_id == Photon.id).filter(Hit.index == 0))
+
+
+def photon_capacity():
+    return get_or_create_session().query(Photon).count()
+
+
+def hits():
+    return get_or_create_session().query(Photon.hits).limit(10).all()
+
+
+@contextmanager
+def hits_generator():
+    get_or_create_session().query(Photon.hits)
 
 
 def get_first_hits_for_all_photon():
@@ -22,4 +40,4 @@ def get_first_hits_and_second_large_energy_hits():
     pass
 
 
-get_first_hits_for_all_photon()
+print(hits())
